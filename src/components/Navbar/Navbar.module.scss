@@ -1,0 +1,69 @@
+#navbar {
+    background-color: white;
+    padding: 12px 25px;
+    position: sticky;
+    top: 0px;
+    z-index: 100;
+    height: 72px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    width: 100%;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .LoginSignup {
+    width: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    a {
+      text-decoration: none;
+      color: rgb(70, 70, 70);
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.4px;
+      border: 1px solid rgb(221, 221, 221);
+      display: flex;
+      align-items: center;
+      padding: 1px 4px;
+      border-radius: 4px;
+      > span {
+        margin-left: 4px;
+      }
+    }
+  }
+  .loginBox {
+    > div {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      position: absolute;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+        rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+      top: 46px;
+      background-color: white;
+      > a {
+        padding: 12px 18px;
+        color: #282828;
+        text-decoration: none;
+        border-bottom: 1px solid rgb(228, 228, 228);
+      }
+    }
+    &:hover > div {
+      display: flex;
+    }
+  }
+  .LoggedIn {
+    display: flex;
+    padding: 4px 10px;
+    text-decoration: none;
+    border-radius: 2px;
+    border: 1px solid #282828;
+    align-items: center;
+    color: #282828;
+    // position: relative;
+    > p {
+      margin-left: 8px;
+    }
+  }
+  

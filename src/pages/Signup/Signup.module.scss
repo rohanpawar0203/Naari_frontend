@@ -1,0 +1,117 @@
+.signup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.signupForm {
+  padding: 15px 20px;
+  width: 30%;
+  background-color: rgba(0, 0, 0, 0.466);
+  h1 {
+    color: white;
+    margin-bottom: 20px;
+  }
+}
+.inputBox {
+  display: grid;
+  grid-template-columns: 15% 85%;
+  justify-content: space-between;
+  border-radius: 4px;
+  align-items: center;
+  border: 1px solid gray;
+  margin-right: 8px;
+  margin-top: 15px;
+  background-color: white;
+  .signupIcons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 4px 0px 0px 4px;
+    background-color: rgb(60, 60, 60);
+    color: white;
+  }
+  input {
+    background-color: white;
+    border-radius: 4px;
+  }
+}
+.buttonBox {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  button {
+    background-color: rgb(60, 60, 60);
+    color: white;
+    font-weight: 600;
+    &:hover {
+      background-color: black;
+      color: white;
+    }
+  }
+}
+.partitionBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0px;
+  color: white;
+  .partitionLine {
+    border: 1px solid white;
+    height: 0px;
+    width: 40%;
+  }
+}
+.googleAuth {
+  height: 42px;
+  background-color: #4285f4;
+  border-radius: 2px;
+  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.25);
+  display: flex;
+  .googleIconBox {
+    margin-top: 1px;
+    margin-left: 1px;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .googleIcon {
+    width: 60%;
+  }
+  .googleText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    width: 88%;
+  }
+  &:hover {
+    box-shadow: 0 0 6px #4285f4;
+    cursor: pointer;
+  }
+  &:active {
+    background: #1669f2;
+  }
+}
+.endBox {
+  margin-top: 15px;
+  text-align: center;
+  p {
+    padding: 3px 0px;
+    color: white;
+    a {
+      text-decoration: none;
+      font-weight: 900;
+      color: #1b63ff;
+    }
+  }
+}
