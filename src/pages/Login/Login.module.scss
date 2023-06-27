@@ -2,13 +2,15 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  min-height: 100vh;
 }
 .loginForm {
-  padding: 15px 20px;
-  width: 30%;
+  padding: 18px 20px;
+  border-radius: "8px";
+  width: 28%;
   background-color: rgba(0, 0, 0, 0.466);
+  margin: auto;
   h1 {
     color: white;
     margin-bottom: 20px;
@@ -21,9 +23,8 @@
   border-radius: 4px;
   align-items: center;
   border: 1px solid gray;
-  margin-right: 8px;
-  margin-top: 15px;
-  background-color: #f7c447;
+  margin: 15px 15px 20px 0px;
+  width: 100%;
   .loginIcons {
     display: flex;
     justify-content: center;
@@ -33,10 +34,11 @@
     background-color: rgb(60, 60, 60);
     color: white;
   }
-  input {
-    background-color: white;
-    border-radius: 4px;
-  }
+  // input {
+  //   border-radius: 4px;
+  //   width: 312px !important;
+  //   height: 40px !important;
+  // }
 }
 .buttonBox {
   display: flex;
@@ -114,4 +116,86 @@
       color: #1b63ff;
     }
   }
+}
+
+.container {
+  background-color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+// .loginForm {
+//   width: 80%;
+//   display: flex;
+//   flex-direction: column;
+//   gap: 4px;
+//   border-radius: 8px;
+//   padding: 16px;
+//   background-color: white;
+// }
+
+.heading {
+  text-align: center;
+  line-height: normal;
+  color: white;
+  font-weight: medium;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.iconContainer {
+  background-color: white;
+  color: #059669;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 16px;
+  border-radius: 50%;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
+  text-align: center;
+}
+
+.otpInput {
+  /* Add your custom styles for the OTP input */
+}
+
+.verifyButton {
+  background-color: #059669;
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+  border-radius: 4px;
+}
+
+.spinner {
+  margin-top: 1px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sendCodeButton {
+  background-color: #059669;
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+  border-radius: 4px;
 }

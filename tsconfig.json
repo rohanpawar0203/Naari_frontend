@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "node_modules/otp-input-react/build/otp-input-react.d.ts", "node_modules/otp-input-react/build/otp-input-react.d.ts"  ]
 }

@@ -6,13 +6,15 @@ import { IUser } from "../../pages/Login/Login";
 import { Link } from "react-router-dom";
 import Naari_Logo from "../../assets/Naari_Logo.jpeg";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAction } from "../../Redux/Actions/LoginAction";
 import { ToastContainer, toast } from "react-toastify";
+import { IProfileData } from "../ProfileDetails/ProfileDetails";
+import { loginAction } from "../../Redux/Actions/loginAction";
 
 export interface IStore {
   Reducer: {
     userData: IUser;
     loggedInUser: boolean;
+    profileData: IProfileData;
   };
 }
 
@@ -55,6 +57,9 @@ const Navbar = () => {
       {loggedInUser ? (
         <Box>
           <Button onClick={logoutUser}>Logged In</Button>
+          <Button>
+            <Link to={"/profile"}>Profile</Link>
+          </Button>
         </Box>
       ) : (
         <Box className={styles.LoginSignup}>

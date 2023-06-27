@@ -1,21 +1,19 @@
-import React from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-} from "@mui/material";
-import { MdVpnKey } from "react-icons/md";
-import { MdEmail } from "react-icons/md";
+import React, { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import styles from "./Login.module.scss";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
-import { loginAction } from "../../Redux/Actions/LoginAction";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
+import { loginAction } from "../../Redux/Actions/loginAction";
+
+import { CgSpinner } from "react-icons/cg";
+import OtpInput from "react-otp-input";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { auth } from "../../firebase.config";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 export interface IUser {
   _id: string;
@@ -31,43 +29,62 @@ export interface IUserData {
   user: IUser;
 }
 
-interface FormData {
-  email: string;
-  password: string;
-}
-
-const formData: FormData = {
-  email: "",
-  password: "",
-};
-
 const Login = () => {
-  const [input, setInput] = React.useState(formData);
+  const [otp, setOtp] = useState<string>("");
+  const [number, setNumber] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showOTP, setShowOTP] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setInput((prev) => ({ ...prev, [name]: value }));
-  };
+  function onCaptchVerify(): void {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        "recaptcha-container",
+        {
+          size: "invisible",
+          "expired-callback": () => {},
+        },
+        auth
+      );
+    }
+  }
 
-  const loginUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  function onSignup(): void {
+    setLoading(true);
+    onCaptchVerify();
+
+    const appVerifier = window.recaptchaVerifier;
+
+    const formatPh = "+" + number;
+
+    signInWithPhoneNumber(auth, formatPh, appVerifier)
+      .then((confirmationResult) => {
+        window.confirmationResult = confirmationResult;
+        setLoading(false);
+        setShowOTP(true);
+        toast.success("OTP sent successfully!");
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  }
+
+  const loginUser = async () => {
     try {
       const res = await fetch(
         "https://naari-backend-lzy3caj3ca-el.a.run.app/auth/login",
         {
           method: "POST",
-          body: JSON.stringify(input),
+          body: `{ "contact": ${parseInt(number)} }`,
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
       const data: IUserData = await res.json();
-      console.log("data:", data);
       if (res.ok) {
-        toast.success("Login successful");
         localStorage.setItem("loginToken", data.token);
         localStorage.setItem("userId", data.user._id);
         loginAction(true, dispatch);
@@ -81,6 +98,22 @@ const Login = () => {
       toast.error("Server error");
     }
   };
+
+  function onOTPVerify(): void {
+    setLoading(true);
+    window.confirmationResult
+      .confirm(otp)
+      .then(async (res: { user: any }) => {
+        toast.success("Verification Successful");
+        setLoading(false);
+        loginUser();
+      })
+      .catch((err: any) => {
+        console.log(err);
+        toast.error("Verification Failed");
+        setLoading(false);
+      });
+  }
 
   return (
     <Box className={styles.login}>
@@ -99,74 +132,55 @@ const Login = () => {
       />
       <Navbar />
       <Box className={styles.loginForm}>
-        <h1>Sign In</h1>
-        <Box className={styles.inputBox}>
-          <Box className={styles.loginIcons}>
-            <MdEmail fontSize="20px" />
-          </Box>
-          <TextField
-            size="small"
-            id="outlined-basic"
-            label="Enter Email"
-            variant="filled"
-            name="email"
-            onChange={handleChange}
-          />
-        </Box>
-        <Box className={styles.inputBox}>
-          <Box className={styles.loginIcons}>
-            <MdVpnKey fontSize="20px" />
-          </Box>
-          <TextField
-            size="small"
-            id="outlined-basic"
-            label="Enter Password"
-            variant="filled"
-            name="password"
-            onChange={handleChange}
-          />
-        </Box>
-        <FormGroup>
-          <FormControlLabel
-            sx={{ color: "white", fontWeight: "600" }}
-            control={
-              <Checkbox
-                sx={{
-                  color: "rgb(60, 60, 60)",
-                  "&.Mui-checked": { color: "rgb(60, 60, 60)" },
+        <Typography variant="h6">Login Via OTP</Typography>
+        {showOTP ? (
+          <Box>
+            <Box className={styles.inputBox}>
+              <OtpInput
+                value={otp}
+                onChange={setOtp}
+                numInputs={6}
+                renderSeparator={<span>&nbsp;&nbsp;</span>}
+                inputStyle={{
+                  width: "45px",
+                  height: "40px",
+                  borderRadius: "5px",
+                  border: "1px solid black",
                 }}
+                renderInput={(props) => <input {...props} />}
               />
-            }
-            label="Remember Me"
-          />
-        </FormGroup>
-        <Box className={styles.buttonBox}>
-          <Button size="medium" variant="contained" onClick={loginUser}>
-            Login
-          </Button>
-        </Box>
-        <Box className={styles.partitionBox}>
-          <Box className={styles.partitionLine}></Box>
-          <span>OR</span>
-          <Box className={styles.partitionLine}></Box>
-        </Box>
-        <Box className={styles.googleAuth}>
-          <Box className={styles.googleIconBox}>
-            <img
-              className={styles.googleIcon}
-              src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-            />
+            </Box>
+            <Box className={styles.buttonBox}>
+              <Button
+                size="medium"
+                variant="contained"
+                onClick={onOTPVerify}
+                className={styles.verifyButton}
+              >
+                {loading && <CgSpinner size={20} className={styles.spinner} />}
+                <span>Verify OTP</span>
+              </Button>
+            </Box>
           </Box>
-          <p className={styles.googleText}>Sign in with google</p>
-        </Box>
-        <Box className={styles.endBox}>
-          <p>
-            Don't have an account? <Link to="/signup">Sign Up</Link>
-          </p>
-          <p>
-            <Link to="/signup">Forgot your password ?</Link>
-          </p>
-        </Box>
+        ) : (
+          <Box>
+            <Box id="recaptcha-container"></Box>
+            <Box className={styles.inputBox}>
+              <PhoneInput country={"in"} value={number} onChange={setNumber} />
+            </Box>
+            <Box className={styles.buttonBox}>
+              <Button
+                size="medium"
+                variant="contained"
+                onClick={onSignup}
+                className={styles.sendCodeButton}
+              >
+                {loading && <CgSpinner size={20} className={styles.spinner} />}
+                Send code via SMS
+              </Button>
+            </Box>
+          </Box>
+        )}
       </Box>
     </Box>
   );

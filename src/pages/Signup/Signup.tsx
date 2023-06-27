@@ -55,7 +55,6 @@ const Signup = () => {
           },
         }
       );
-      console.log("input:", input);
       if (res.ok) {
         toast.success("Signup successful");
         navigate("/login");

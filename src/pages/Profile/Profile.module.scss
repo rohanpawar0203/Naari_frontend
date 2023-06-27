@@ -1,0 +1,63 @@
+.profile {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 25px;
+  width: 90%;
+  margin: 20px auto;
+}
+.profileTitle {
+  font-weight: 600;
+}
+.HeadSection {
+  border: 1px solid gray;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  background-color: #b3dbd8;
+  position: relative;
+  overflow: hidden;
+  object-fit: fill;
+  margin-top: 20px;
+}
+
+.profileImageBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  position: relative;
+  padding: 12px;
+  // background-color: rgb(114, 114, 114);
+  border-radius: 8px;
+
+  p {
+    background-color: rgb(114, 114, 114);
+    border-radius: 4px;
+    padding: 4px 8px;
+    color: white;
+  }
+}
+.profileImage {
+  position: relative;
+  margin-bottom: 12px;
+  img {
+    border-radius: 50%;
+    border: 2px solid rgb(70, 70, 70);
+  }
+}
+.cameraIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  border: 2px solid rgb(70, 70, 70);
+  background-color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
