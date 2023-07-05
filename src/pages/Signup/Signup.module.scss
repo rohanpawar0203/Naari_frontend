@@ -2,42 +2,15 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   align-items: center;
+  padding: 15px;
 }
 .signupForm {
   padding: 15px 20px;
-  width: 28%;
   background-color: rgba(0, 0, 0, 0.466);
-  margin: auto;
-  margin-bottom: 20px;
   h1 {
     color: white;
     margin-bottom: 20px;
-  }
-}
-.inputBox {
-  display: grid;
-  grid-template-columns: 15% 85%;
-  justify-content: space-between;
-  border-radius: 4px;
-  align-items: center;
-  border: 1px solid gray;
-  margin-right: 8px;
-  margin-top: 15px;
-  background-color: white;
-  .signupIcons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    border-radius: 4px 0px 0px 4px;
-    background-color: rgb(60, 60, 60);
-    color: white;
-  }
-  input {
-    background-color: white;
-    border-radius: 4px;
   }
 }
 .buttonBox {
@@ -45,12 +18,13 @@
   justify-content: flex-end;
   align-items: center;
   button {
-    background-color: rgb(60, 60, 60);
+    background-color: black !important;
     color: white;
+    border: 1px solid black !important;
     font-weight: 600;
     &:hover {
-      background-color: black;
-      color: white;
+      background-color: white !important;
+      color: black;
     }
   }
 }

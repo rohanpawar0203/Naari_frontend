@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import Naari_Logo from "../../assets/Naari_Logo.jpeg";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import { IProfileData } from "../ProfileDetails/ProfileDetails";
+import { IProfileData } from "../AdvSignupForm/AdvSignupForm";
 import { loginAction } from "../../Redux/Actions/loginAction";
 
 export interface IStore {

@@ -1,0 +1,42 @@
+.profileFormRow {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+.inputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 550px;
+  margin-bottom: 25px;
+  label {
+    color: black;
+  }
+  input {
+    background-color: white;
+    border-radius: 4px;
+  }
+}
+.labelTag {
+  font-size: 14px;
+  font-weight: 600;
+  color: #525252;
+  line-height: 22px;
+}
+.buttonBox {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  float: right;
+  button {
+    background-color: black !important;
+    color: white;
+    border: 1px solid black !important;
+    font-weight: 600;
+    &:hover {
+      background-color: white !important;
+      color: black;
+    }
+  }
+}

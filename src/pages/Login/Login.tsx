@@ -77,7 +77,7 @@ const Login = () => {
         "https://naari-backend-lzy3caj3ca-el.a.run.app/auth/login",
         {
           method: "POST",
-          body: `{ "contact": ${parseInt(number)} }`,
+          body: `{ "contact": ${parseInt(number.slice(2, 12))} }`,
           headers: {
             "Content-Type": "application/json",
           },
@@ -181,6 +181,16 @@ const Login = () => {
             </Box>
           </Box>
         )}
+        <Box className={styles.partitionBox}>
+          <Box className={styles.partitionLine}></Box>
+          <span>OR</span>
+          <Box className={styles.partitionLine}></Box>
+        </Box>
+        <Box className={styles.endBox}>
+          <p>
+            Don't have an account? <Link to="/signup">Sign Up</Link>
+          </p>
+        </Box>
       </Box>
     </Box>
   );

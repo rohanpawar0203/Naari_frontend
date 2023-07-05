@@ -1,0 +1,24 @@
+.inputBox {
+  display: grid;
+  grid-template-columns: 15% 85%;
+  justify-content: space-between;
+  border-radius: 4px;
+  align-items: center;
+  border: 1px solid gray;
+  margin-right: 8px;
+  margin-top: 15px;
+  background-color: white;
+  .signupIcons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 4px 0px 0px 4px;
+    background-color: rgb(60, 60, 60);
+    color: white;
+  }
+  input {
+    background-color: white;
+    border-radius: 4px;
+  }
+}

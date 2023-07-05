@@ -4,7 +4,6 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TabPanel from "../../components/TabPanel/TabPanel";
-import ProfileDetails from "../../components/ProfileDetails/ProfileDetails";
 import Security from "../../components/Security/Security";
 import Notifications from "../../components/Notifications/Notifications";
 import { AiOutlineCamera } from "react-icons/ai";
@@ -13,10 +12,9 @@ import Navbar from "../../components/Navbar/Navbar";
 import { useDispatch } from "react-redux";
 import { loginAction } from "../../Redux/Actions/loginAction";
 import { userAction } from "../../Redux/Actions/userAction";
-import { TextField } from "@mui/material";
 
 const Profile = () => {
-  const [value, setValue] = React.useState("profileDetails");
+  const [value, setValue] = React.useState("security");
 
   const dispatch = useDispatch();
   const getUser = async () => {
@@ -86,14 +84,10 @@ const Profile = () => {
         <Box sx={{ width: "100%" }}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs value={value} onChange={handleChange}>
-              <Tab label="Profile Details" value="profileDetails" />
               <Tab label="Security" value="security" />
               <Tab label="Notifications" value="notifications" />
             </Tabs>
           </Box>
-          <TabPanel value={value} index={"profileDetails"}>
-            <ProfileDetails />
-          </TabPanel>
           <TabPanel value={value} index={"security"}>
             <Security />
           </TabPanel>
