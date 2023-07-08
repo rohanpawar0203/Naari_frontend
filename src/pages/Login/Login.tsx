@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import { loginAction } from "../../Redux/Actions/loginAction";
-
 import { CgSpinner } from "react-icons/cg";
 import OtpInput from "react-otp-input";
 import PhoneInput from "react-phone-input-2";

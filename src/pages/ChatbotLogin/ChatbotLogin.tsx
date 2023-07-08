@@ -10,6 +10,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { IUserData } from "../Login/Login";
 import { loginAction } from "../../Redux/Actions/loginAction";
 import { useDispatch } from "react-redux";
+import OtpVerification from "../../components/OtpVerification/OtpVerification";
 
 const theme = {
   background: "#f5f8fb",
@@ -131,6 +132,8 @@ const GetUserData = ({ steps }: { steps: any }) => {
 
 const ChatbotLogin = () => {
   const [number, setNumber] = useState<string>("");
+  const [verify, setVerify] = useState<boolean>(false);
+  const [delay, setDelay] = useState<number>(1000);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -200,9 +203,11 @@ const ChatbotLogin = () => {
   function onOTPVerify(otp: number): boolean {
     return window.confirmationResult
       .confirm(otp)
-      .then(async (res: { user: any; }) => {
+      .then(async (res: { user: any }) => {
         toast.success("Verification Successful");
         loginUser();
+        setVerify(true);
+        setDelay(0);
         return true;
       })
       .catch((err: any) => {
@@ -245,15 +250,18 @@ const ChatbotLogin = () => {
     {
       id: "otp",
       user: true,
-      validator: async (value: any) => {
-        const verify = await onOTPVerify(value);
-        console.log('verify:', verify)
-        if(!verify){
-          return "Invalid OTP"
-        }
-        return true;
-      },
-      trigger: "loginSuccessful",
+      trigger: "verifyOTP",
+    },
+    {
+      id: "verifyOTP",
+      component: (
+        <OtpVerification
+          triggerNextStep={undefined}
+          previousStep={undefined}
+          number={number}
+        />
+      ),
+      // end: true,
     },
     {
       id: "loginSuccessful",
@@ -283,7 +291,7 @@ const ChatbotLogin = () => {
           <ChatBot
             headerTitle="Naari Chatbot"
             recognitionEnable={true}
-            speechSynthesis={{ enable: true, lang: "hi" }}
+            // speechSynthesis={{ enable: true, lang: "hi" }}
             steps={steps}
           />
         </ThemeProvider>
