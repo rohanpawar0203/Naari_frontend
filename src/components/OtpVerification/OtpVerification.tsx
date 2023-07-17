@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import { loginAction } from "../../Redux/Actions/loginAction";
 import { IUserData } from "../../pages/Login/Login";
 import { CgSpinner } from "react-icons/cg";
@@ -11,13 +11,14 @@ const OtpVerification = ({
   triggerNextStep,
   previousStep,
   number,
+  triggerValue,
 }: {
   triggerNextStep: any;
   previousStep: any;
   number: string;
+  triggerValue: string;
 }) => {
-  const [verified, setVerified] = useState<boolean>(false);
-  console.log("triggerNextStep:", triggerNextStep);
+  const [verified, setVerified] = useState<string>("loading");
 
   const dispatch = useDispatch();
 
@@ -40,39 +41,42 @@ const OtpVerification = ({
         loginAction(true, dispatch);
       } else {
         loginAction(false, dispatch);
-        toast.error("Login failed");
+        // toast.error("Login failed");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Server error");
+      // toast.error("Server error");
     }
   };
 
-  const onOTPVerify = async (otp: number) => {
-    console.log("otp:", otp);
+  const onOTPVerify = async (otp: number, triggerValue: string) => {
     try {
       const result = await window.confirmationResult.confirm(otp);
-      toast.success("Verification Successful");
+      // toast.success("Verification Successful");
       loginUser();
-      setVerified(true);
-      triggerNextStep({ value: "", trigger: "loginSuccessful" });
+      setVerified("verified");
+      triggerNextStep({ value: "", trigger: triggerValue });
       return true;
     } catch (error) {
       console.log(error);
-      toast.error("Verification Failed");
+      // toast.error("Verification Failed");
+      setVerified("failed");
       triggerNextStep({ value: "", trigger: "otp" });
       return false;
     }
   };
 
   useEffect(() => {
-    onOTPVerify(previousStep.message);
+    onOTPVerify(previousStep.message, triggerValue);
   }, [previousStep.message]);
 
   return (
     <Box>
-      {verified && <Typography>OTP Verified</Typography>}
-      {!verified && <Typography>Wrong OTP</Typography>}
+      {verified === "loading" && (
+        <CgSpinner size={20} className={styles.spinner} />
+      )}
+      {verified === "verified" && <Typography>OTP Verified</Typography>}
+      {verified === "failed" && <Typography>Wrong OTP</Typography>}
     </Box>
   );
 };

@@ -49,26 +49,26 @@ const Login = () => {
     }
   }
 
-  function onSignup(): void {
-    setLoading(true);
-    onCaptchVerify();
+  // function onSignup(): void {
+  //   setLoading(true);
+  //   onCaptchVerify();
 
-    const appVerifier = window.recaptchaVerifier;
+  //   const appVerifier = window.recaptchaVerifier;
 
-    const formatPh = "+" + number;
+  //   const formatPh = "+" + number;
 
-    signInWithPhoneNumber(auth, formatPh, appVerifier)
-      .then((confirmationResult) => {
-        window.confirmationResult = confirmationResult;
-        setLoading(false);
-        setShowOTP(true);
-        toast.success("OTP sent successfully!");
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }
+  //   signInWithPhoneNumber(auth, formatPh)
+  //     .then((confirmationResult) => {
+  //       window.confirmationResult = confirmationResult;
+  //       setLoading(false);
+  //       setShowOTP(true);
+  //       toast.success("OTP sent successfully!");
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setLoading(false);
+  //     });
+  // }
 
   const loginUser = async () => {
     try {
@@ -171,7 +171,7 @@ const Login = () => {
               <Button
                 size="medium"
                 variant="contained"
-                onClick={onSignup}
+                // onClick={onSignup}
                 className={styles.sendCodeButton}
               >
                 {loading && <CgSpinner size={20} className={styles.spinner} />}

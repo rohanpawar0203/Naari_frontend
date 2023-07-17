@@ -6,10 +6,6 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const apiKey1 = "AIzaSyAEVdGP__OtwskOz2eT9AhSMJWDKNGUESc";
-const apiKey2 = "AIzaSyBmWutoWhDxVyKHq2UBWWPZUmY6-zEwiB8";
-const apiKey3 = "AIzaSyByt2VRbWiypfFykRMBt6T6jbFQ2S14X9Y";
-const apiKey4 = "AIzaSyBEBv7VgCke2kOk4MXNHa-d4oMaOXwvvoA";
 const firebaseConfig = {
   apiKey: "AIzaSyAEVdGP__OtwskOz2eT9AhSMJWDKNGUESc",
   authDomain: "",

@@ -5,6 +5,9 @@ import { ThemeProvider } from "styled-components";
 import Navbar from "../../components/Navbar/Navbar";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import OtpVerification from "../../components/OtpVerification/OtpVerification";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../../firebase.config";
 
 const theme = {
   background: "#f5f8fb",
@@ -18,13 +21,11 @@ const theme = {
 };
 
 export interface ISignupFormData {
-  userId: string;
+  // userId: string;
   firstName: string;
   lastName: string;
   email: string;
   contact: string;
-  // type: string;
-  // role: string;
   companyName: string;
   revenuePerYear: string;
   gst_in: string;
@@ -35,13 +36,11 @@ export interface ISignupFormData {
   ifsc_code: string;
 }
 const signupFormData: ISignupFormData = {
-  userId: "",
+  // userId: "",
   firstName: "",
   lastName: "",
   email: "",
   contact: "",
-  // type: "",
-  // role: "",
   companyName: "",
   revenuePerYear: "",
   gst_in: "",
@@ -52,43 +51,24 @@ const signupFormData: ISignupFormData = {
   ifsc_code: "",
 };
 
-const GetUserData = ({ steps }: { steps: any }) => {
-  const [signupInput, setSignupInput] = React.useState(signupFormData);
+const GetUserData = (signupInput: any) => {
+  return <Box>Registration Successful</Box>;
+};
 
+const ChatbotSignup = () => {
+  const [number, setNumber] = useState<string>("");
+  const [signupInput, setSignupInput] = React.useState(signupFormData);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const {
-      firstName,
-      lastName,
-      contactNumber,
-      emailAddress,
-      companyName,
-      revenuePerYear,
-      gstIn,
-      panNumber,
-      aadharNumber,
-      accountNumber,
-      accountName,
-      ifscCode,
-    } = steps;
-
-    setSignupInput((prevState) => ({
-      ...prevState,
-      firstName: firstName.message,
-      lastName: lastName.message,
-      contact: contactNumber.message,
-      email: emailAddress.message,
-      companyName: companyName.message,
-      revenuePerYear: revenuePerYear.message,
-      gst_in: gstIn.message,
-      pan_number: panNumber.message,
-      aadhar_number: aadharNumber.message,
-      account_number: accountNumber.message,
-      account_name: accountName.message,
-      ifsc_code: ifscCode.message,
-    }));
-  }, [steps]);
+  const handleLocalStorage = (details: any) => {
+    setSignupInput((prev) => {
+      localStorage.setItem(
+        "signupInput",
+        JSON.stringify({ ...prev, ...details })
+      );
+      return { ...prev, ...details };
+    });
+  };
 
   const registerUser = async () => {
     try {
@@ -103,32 +83,141 @@ const GetUserData = ({ steps }: { steps: any }) => {
         }
       );
       if (res.ok) {
-        toast.success("Signup successful");
+        // toast.success("Signup successful");
+        console.log("Signup successful");
         navigate("/login");
       } else {
         const data = await res.json();
-        toast.error("Signup failed");
+        // toast.error("Signup failed");
+        console.log("Signup failed");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Server error");
+      // toast.error("Server error");
+      console.log("Server error");
     }
   };
 
-  useEffect(() => {
-    registerUser();
-  }, [signupInput]);
+  function onCaptchaVerify(): void {
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: () => {
+          onSignInSubmit(number);
+        },
+      },
+      auth
+    );
+  }
 
-  console.log("signupInput:", signupInput);
+  const onSignInSubmit = (phoneNumber: string): void => {
+    onCaptchaVerify();
+    setNumber(phoneNumber);
 
-  return <Box>Registration Successful</Box>;
-};
+    const appVerifier = window.recaptchaVerifier;
 
-const ChatbotSignup = () => {
+    const formatPh = "+91" + phoneNumber;
+
+    signInWithPhoneNumber(auth, formatPh, appVerifier)
+      .then((confirmationResult) => {
+        window.confirmationResult = confirmationResult;
+        console.log("OTP Sent");
+        // toast.success("OTP sent successfully!");
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
   const steps = [
     {
       id: "Greet",
       message: "Hey, Welcome to Naari Website",
+      trigger: () => {
+        const signupDraftString = localStorage.getItem("signupInput");
+        if (signupDraftString) {
+          const signupDraft: ISignupFormData = JSON.parse(signupDraftString);
+          setSignupInput(signupDraft);
+          if (signupDraft.contact === "") {
+            return "askContactNumber";
+          } else if (signupDraft.firstName === "") {
+            return "askFirstName";
+          } else if (signupDraft.lastName === "") {
+            return "askFirstName";
+          } else if (signupDraft.email === "") {
+            return "askEmailAddress";
+          } else if (signupDraft.companyName === "") {
+            return "askCompanyName";
+          } else if (signupDraft.revenuePerYear === "") {
+            return "askRevenuePerYear";
+          } else if (signupDraft.gst_in === "") {
+            return "askGstIn";
+          } else if (signupDraft.pan_number === "") {
+            return "askPanNumber";
+          } else if (signupDraft.aadhar_number === "") {
+            return "askAadharNumber";
+          } else if (signupDraft.account_number === "") {
+            return "askAccountNumber";
+          } else if (signupDraft.account_name === "") {
+            return "askAccountName";
+          } else if (signupDraft.ifsc_code === "") {
+            return "askIfscCode";
+          }
+        }
+        return "askContactNumber";
+      },
+    },
+    {
+      id: "askContactNumber",
+      message: "Please enter your Contact Number",
+      trigger: "contactNumber",
+    },
+    {
+      id: "contactNumber",
+      user: true,
+      validator: (value: any) => {
+        if (!isNaN(value) && value.length == 10) {
+          onSignInSubmit(value);
+          return true;
+        }
+        return "Please enter a valid Number";
+      },
+      trigger: "otpSent",
+    },
+    {
+      id: "otpSent",
+      message: "We have sent an OTP on {previousValue}, Please enter the OTP",
+      trigger: "otp",
+    },
+    {
+      id: "otp",
+      user: true,
+      validator: (value: any) => {
+        if (!isNaN(value) && value.length == 6) {
+          return true;
+        }
+        return "Please enter a valid OTP";
+      },
+      trigger: "verifyOTP",
+    },
+    {
+      id: "verifyOTP",
+      component: (
+        <OtpVerification
+          triggerNextStep={undefined}
+          previousStep={undefined}
+          number={number}
+          triggerValue={"otpSuccessful"}
+        />
+      ),
+    },
+    {
+      id: "otpSuccessful",
+      message: (steps: any) => {
+        handleLocalStorage({ contact: steps.steps.contactNumber.message });
+        return "Your otp is successfully verified";
+      },
       trigger: "askFirstName",
     },
     {
@@ -139,6 +228,12 @@ const ChatbotSignup = () => {
     {
       id: "firstName",
       user: true,
+      validator: (value: any) => {
+        if (/^[a-zA-Z]+$/.test(value)) {
+          return true;
+        }
+        return "Invalid First Name";
+      },
       trigger: "askLastName",
     },
     {
@@ -149,23 +244,23 @@ const ChatbotSignup = () => {
     {
       id: "lastName",
       user: true,
+      validator: (value: any) => {
+        if (/^[a-zA-Z]+$/.test(value)) {
+          return true;
+        }
+        return "Invalid Last Name";
+      },
       trigger: "greetWithName",
     },
     {
       id: "greetWithName",
-      message: ({ value, steps }: { value: any; steps: any }) => {
+      message: ({ value, steps }: { value: string; steps: any }) => {
+        handleLocalStorage({
+          firstName: steps.firstName.message,
+          lastName: steps.lastName.message,
+        });
         return `Great ${steps.firstName.message} ${steps.lastName.message}, Nice to meet you!`;
       },
-      trigger: "askContactNumber",
-    },
-    {
-      id: "askContactNumber",
-      message: "Please enter your Contact Number",
-      trigger: "contactNumber",
-    },
-    {
-      id: "contactNumber",
-      user: true,
       trigger: "askEmailAddress",
     },
     {
@@ -176,6 +271,15 @@ const ChatbotSignup = () => {
     {
       id: "emailAddress",
       user: true,
+      validator: (value: any) => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailPattern.test(value) || value === "") {
+          handleLocalStorage({ email: value });
+          return true;
+        }
+        return "Invalid Email Address";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askCompanyName",
     },
     {
@@ -186,6 +290,15 @@ const ChatbotSignup = () => {
     {
       id: "companyName",
       user: true,
+      validator: (value: any) => {
+        const companyNamePattern = /^[a-zA-Z0-9\s]+$/;
+        if (companyNamePattern.test(value) || value === "") {
+          handleLocalStorage({ companyName: value });
+          return true;
+        }
+        return "Invalid Company Name";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askRevenuePerYear",
     },
     {
@@ -196,6 +309,15 @@ const ChatbotSignup = () => {
     {
       id: "revenuePerYear",
       user: true,
+      validator: (value: any) => {
+        const a = Number(value);
+        if ((!isNaN(a) && a > 0) || value === "") {
+          handleLocalStorage({ revenuePerYear: value });
+          return true;
+        }
+        return "Invalid Per Year Revenue.";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askGstIn",
     },
     {
@@ -206,6 +328,15 @@ const ChatbotSignup = () => {
     {
       id: "gstIn",
       user: true,
+      validator: (value: any) => {
+        const gstNumberPattern = /^[A-Za-z0-9]+$/;
+        if (gstNumberPattern.test(value) || value === "") {
+          handleLocalStorage({ gst_in: value });
+          return true;
+        }
+        return "Invalid GST Number";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askPanNumber",
     },
     {
@@ -216,6 +347,16 @@ const ChatbotSignup = () => {
     {
       id: "panNumber",
       user: true,
+      validator: (value: any) => {
+        const capitalPan = value.toUpperCase();
+        const panNumberPattern = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+        if (panNumberPattern.test(capitalPan) || capitalPan === "") {
+          handleLocalStorage({ pan_number: capitalPan });
+          return true;
+        }
+        return "Invalid PAN Number";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askAadharNumber",
     },
     {
@@ -226,6 +367,15 @@ const ChatbotSignup = () => {
     {
       id: "aadharNumber",
       user: true,
+      validator: (value: any) => {
+        const aadharRegex = /^\d{12}$/;
+        if (aadharRegex.test(value) || value === "") {
+          handleLocalStorage({ aadhar_number: value });
+          return true;
+        }
+        return "Invalid Aadhar Number";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askAccountNumber",
     },
     {
@@ -236,6 +386,14 @@ const ChatbotSignup = () => {
     {
       id: "accountNumber",
       user: true,
+      validator: (value: any) => {
+        if (/^\d+$/.test(value) || value === "") {
+          handleLocalStorage({ account_number: value });
+          return true;
+        }
+        return "Invalid Account Number";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askAccountName",
     },
     {
@@ -246,6 +404,14 @@ const ChatbotSignup = () => {
     {
       id: "accountName",
       user: true,
+      validator: (value: any) => {
+        if (/^[a-zA-Z\s]+$/.test(value) || value === "") {
+          handleLocalStorage({ account_name: value });
+          return true;
+        }
+        return "Invalid Account Name";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "askIfscCode",
     },
     {
@@ -256,6 +422,16 @@ const ChatbotSignup = () => {
     {
       id: "ifscCode",
       user: true,
+      validator: (value: any) => {
+        const ifscCodePattern = /^[A-Za-z0-9]+$/;
+        if (ifscCodePattern.test(value) || value === "") {
+          handleLocalStorage({ ifsc_code: value });
+          registerUser();
+          return true;
+        }
+        return "Invalid IFSC Code";
+      },
+      placeholder: "Press Enter to Skip",
       trigger: "registrationSuccessful",
     },
     {
@@ -265,7 +441,7 @@ const ChatbotSignup = () => {
     },
     {
       id: "getUserData",
-      component: <GetUserData steps={undefined} />,
+      component: <GetUserData signupInput={signupInput} />,
       end: true,
     },
   ];
@@ -273,19 +449,14 @@ const ChatbotSignup = () => {
   return (
     <Box>
       <Navbar />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "20px",
-        }}
-      >
+      <Box sx={{ padding: "20px" }}>
+        <Box id="recaptcha-container"></Box>
         <ThemeProvider theme={theme}>
           <ChatBot
-            headerTitle="Naari Chatbot"
             recognitionEnable={true}
             speechSynthesis={{ enable: true, lang: "hi" }}
+            hideHeader={true}
+            style={{ width: "100%", height: "100%" }}
             steps={steps}
           />
         </ThemeProvider>
