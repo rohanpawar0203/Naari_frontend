@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import ChatBot from "react-simple-chatbot";
 import { ThemeProvider } from "styled-components";
@@ -7,7 +7,8 @@ import OtpVerification from "../../components/OtpVerification/OtpVerification";
 import { toast } from "react-toastify";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../firebase.config";
-import CaptchaVerifier from "../../components/CaptchaVerifier/CaptchaVerifier";
+import i18n from "../../i18n";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   background: "#f5f8fb",
@@ -22,6 +23,18 @@ const theme = {
 
 const ChatbotLogin = () => {
   const [number, setNumber] = useState<string>("");
+  const [currLang, setCurrLang] = useState<string>("en");
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    const lang = localStorage.getItem("lang");
+    console.log("lang:", lang);
+    if (lang) {
+      setCurrLang(lang);
+      i18n.changeLanguage(lang);
+    }
+  }, []);
+
   function onCaptchaVerify(): void {
     window.recaptchaVerifier = new RecaptchaVerifier(
       "recaptcha-container",
@@ -57,49 +70,45 @@ const ChatbotLogin = () => {
   const steps = [
     {
       id: "Greet",
-      message: "Hey, Welcome to Naari Website",
+      message: t("Greet"),
       trigger: "login",
     },
     {
       id: "login",
-      message: "Lets Start the Login Process",
+      message: t("login"),
       trigger: "askContactNumber",
     },
     {
       id: "askContactNumber",
-      message: "Please enter your Contact Number",
+      message: t("askContactNumber"),
       trigger: "contactNumber",
     },
     {
       id: "contactNumber",
       user: true,
-      // validator: (value: any) => {
-      //   onSignInSubmit(value);
-      //   return true;
-      // },
-      trigger: "sendOtp",
-    },
-    {
-      id: "sendOtp",
-      component: (
-        <CaptchaVerifier
-          triggerNextStep={undefined}
-          previousStep={undefined}
-          setNumber={setNumber}
-        />
-      ),
+      validator: (value: any) => {
+        if (!isNaN(value) && value.length == 10) {
+          onSignInSubmit(value);
+          return true;
+        }
+        return t("invalidNumber");
+      },
+      trigger: "otpSent",
     },
     {
       id: "otpSent",
-      message: ({ value, steps }: {value: any, steps: any }) => {
-        // return `We have sent an OTP on ${steps.contactNumber.message}, Please enter the OTP`;
-        return value
-      },
+      message: t("otpSent"),
       trigger: "otp",
     },
     {
       id: "otp",
       user: true,
+      validator: (value: any) => {
+        if (!isNaN(value) && value.length == 6) {
+          return true;
+        }
+        return t("invalidOtp");
+      },
       trigger: "verifyOTP",
     },
     {
@@ -115,7 +124,7 @@ const ChatbotLogin = () => {
     },
     {
       id: "loginSuccessful",
-      message: "Your Login is Successful",
+      message: t("loginSuccessful"),
       end: true,
     },
   ];
@@ -132,7 +141,7 @@ const ChatbotLogin = () => {
         <ThemeProvider theme={theme}>
           <ChatBot
             recognitionEnable={true}
-            speechSynthesis={{ enable: true, lang: "hi" }}
+            speechSynthesis={{ enable: true, lang: currLang }}
             hideHeader={true}
             style={{ width: "100%", height: "100%" }}
             steps={steps}

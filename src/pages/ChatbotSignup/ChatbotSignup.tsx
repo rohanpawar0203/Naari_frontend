@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import OtpVerification from "../../components/OtpVerification/OtpVerification";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../firebase.config";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n";
 
 const theme = {
   background: "#f5f8fb",
@@ -51,14 +53,18 @@ const signupFormData: ISignupFormData = {
   ifsc_code: "",
 };
 
-const GetUserData = (signupInput: any) => {
-  return <Box>Registration Successful</Box>;
-};
-
 const ChatbotSignup = () => {
   const [number, setNumber] = useState<string>("");
   const [signupInput, setSignupInput] = React.useState(signupFormData);
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const lang = localStorage.getItem("lang");
+    if (lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, []);
 
   const handleLocalStorage = (details: any) => {
     setSignupInput((prev) => {
@@ -133,7 +139,7 @@ const ChatbotSignup = () => {
   const steps = [
     {
       id: "Greet",
-      message: "Hey, Welcome to Naari Website",
+      message: t("Greet"),
       trigger: () => {
         const signupDraftString = localStorage.getItem("signupInput");
         if (signupDraftString) {
@@ -170,7 +176,7 @@ const ChatbotSignup = () => {
     },
     {
       id: "askContactNumber",
-      message: "Please enter your Contact Number",
+      message: t("askContactNumber"),
       trigger: "contactNumber",
     },
     {
@@ -181,13 +187,13 @@ const ChatbotSignup = () => {
           onSignInSubmit(value);
           return true;
         }
-        return "Please enter a valid Number";
+        return t("invalidNumber");
       },
       trigger: "otpSent",
     },
     {
       id: "otpSent",
-      message: "We have sent an OTP on {previousValue}, Please enter the OTP",
+      message: t("otpSent"),
       trigger: "otp",
     },
     {
@@ -197,7 +203,7 @@ const ChatbotSignup = () => {
         if (!isNaN(value) && value.length == 6) {
           return true;
         }
-        return "Please enter a valid OTP";
+        return t("invalidOtp");
       },
       trigger: "verifyOTP",
     },
@@ -216,13 +222,13 @@ const ChatbotSignup = () => {
       id: "otpSuccessful",
       message: (steps: any) => {
         handleLocalStorage({ contact: steps.steps.contactNumber.message });
-        return "Your otp is successfully verified";
+        return t("otpVerified");
       },
       trigger: "askFirstName",
     },
     {
       id: "askFirstName",
-      message: "Please enter your First Name",
+      message: t("askFirstName"),
       trigger: "firstName",
     },
     {
@@ -232,13 +238,13 @@ const ChatbotSignup = () => {
         if (/^[a-zA-Z]+$/.test(value)) {
           return true;
         }
-        return "Invalid First Name";
+        return t("invalidFirstName");
       },
       trigger: "askLastName",
     },
     {
       id: "askLastName",
-      message: "Please enter your Last Name",
+      message: t("askLastName"),
       trigger: "lastName",
     },
     {
@@ -248,7 +254,7 @@ const ChatbotSignup = () => {
         if (/^[a-zA-Z]+$/.test(value)) {
           return true;
         }
-        return "Invalid Last Name";
+        return t("invalidLastName");
       },
       trigger: "greetWithName",
     },
@@ -259,13 +265,16 @@ const ChatbotSignup = () => {
           firstName: steps.firstName.message,
           lastName: steps.lastName.message,
         });
-        return `Great ${steps.firstName.message} ${steps.lastName.message}, Nice to meet you!`;
+        return t("greetWithName", {
+          firstName: steps.firstName.message,
+          lastName: steps.lastName.message,
+        });
       },
       trigger: "askEmailAddress",
     },
     {
       id: "askEmailAddress",
-      message: "Please enter your Email Address",
+      message: t("askEmailAddress"),
       trigger: "emailAddress",
     },
     {
@@ -277,14 +286,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ email: value });
           return true;
         }
-        return "Invalid Email Address";
+        return t("invalidEmailAddress");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askCompanyName",
     },
     {
       id: "askCompanyName",
-      message: "Please enter your Company Name",
+      message: t("askCompanyName"),
       trigger: "companyName",
     },
     {
@@ -296,14 +305,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ companyName: value });
           return true;
         }
-        return "Invalid Company Name";
+        return t("invalidCompanyName");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askRevenuePerYear",
     },
     {
       id: "askRevenuePerYear",
-      message: "Please enter your Per Year Revenue",
+      message: t("askRevenuePerYear"),
       trigger: "revenuePerYear",
     },
     {
@@ -315,14 +324,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ revenuePerYear: value });
           return true;
         }
-        return "Invalid Per Year Revenue.";
+        return t("invalidRevenue");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askGstIn",
     },
     {
       id: "askGstIn",
-      message: "Please enter your GST Number",
+      message: t("askGstIn"),
       trigger: "gstIn",
     },
     {
@@ -334,14 +343,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ gst_in: value });
           return true;
         }
-        return "Invalid GST Number";
+        return t("invalidGST");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askPanNumber",
     },
     {
       id: "askPanNumber",
-      message: "Please enter your Pan Number",
+      message: t("askPanNumber"),
       trigger: "panNumber",
     },
     {
@@ -354,14 +363,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ pan_number: capitalPan });
           return true;
         }
-        return "Invalid PAN Number";
+        return t("invalidPan");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askAadharNumber",
     },
     {
       id: "askAadharNumber",
-      message: "Please enter your Aadhar Number",
+      message: t("askAadharNumber"),
       trigger: "aadharNumber",
     },
     {
@@ -373,14 +382,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ aadhar_number: value });
           return true;
         }
-        return "Invalid Aadhar Number";
+        return t("invalidAadhar");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askAccountNumber",
     },
     {
       id: "askAccountNumber",
-      message: "Please enter your Account Number",
+      message: t("askAccountNumber"),
       trigger: "accountNumber",
     },
     {
@@ -391,14 +400,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ account_number: value });
           return true;
         }
-        return "Invalid Account Number";
+        return t("invalidAccountNumber");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askAccountName",
     },
     {
       id: "askAccountName",
-      message: "Please enter your Account Name",
+      message: t("askAccountName"),
       trigger: "accountName",
     },
     {
@@ -409,14 +418,14 @@ const ChatbotSignup = () => {
           handleLocalStorage({ account_name: value });
           return true;
         }
-        return "Invalid Account Name";
+        return t("invalidAccountName");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "askIfscCode",
     },
     {
       id: "askIfscCode",
-      message: "Please enter your IFSC code",
+      message: t("askIfscCode"),
       trigger: "ifscCode",
     },
     {
@@ -429,19 +438,14 @@ const ChatbotSignup = () => {
           registerUser();
           return true;
         }
-        return "Invalid IFSC Code";
+        return t("invalidIFSC");
       },
-      placeholder: "Press Enter to Skip",
+      placeholder: t("chatBotPlaceholder"),
       trigger: "registrationSuccessful",
     },
     {
       id: "registrationSuccessful",
-      message: "Your Registration is Successful",
-      trigger: "getUserData",
-    },
-    {
-      id: "getUserData",
-      component: <GetUserData signupInput={signupInput} />,
+      message: t("registrationSuccessful"),
       end: true,
     },
   ];

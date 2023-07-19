@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { IProfileData } from "../AdvSignupForm/AdvSignupForm";
 import { loginAction } from "../../Redux/Actions/loginAction";
+import { useEffect } from "react";
+import i18n from "../../i18n";
+import { useTranslation } from "react-i18next";
 
 export interface IStore {
   Reducer: {
@@ -20,6 +23,14 @@ export interface IStore {
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    const lang = localStorage.getItem("lang");
+    if (lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, []);
 
   const reducer = useSelector((store: IStore) => {
     return store.Reducer;
