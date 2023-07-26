@@ -11,7 +11,9 @@ import Navbar from "../../components/Navbar/Navbar";
 import i18n from "../../i18n";
 
 const Home = () => {
+
   const changeLanguage = (e: SelectChangeEvent) => {
+    console.log('e.target.value:', e.target.value)
     i18n.changeLanguage(e.target.value);
     localStorage.setItem("lang", e.target.value);
   };

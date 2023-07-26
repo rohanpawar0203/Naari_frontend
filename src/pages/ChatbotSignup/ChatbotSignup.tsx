@@ -56,12 +56,19 @@ const signupFormData: ISignupFormData = {
 const ChatbotSignup = () => {
   const [number, setNumber] = useState<string>("");
   const [signupInput, setSignupInput] = React.useState(signupFormData);
+  const [speechLang, setSpeechLang] = useState<string>("hi");
+  const [voiceLang, setVoiceLang] = useState<string>("hi-IN");
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const lang = localStorage.getItem("lang");
     if (lang) {
+      setSpeechLang(lang);
+      if (lang == "en") {
+        setVoiceLang("en-US");
+      } else if (lang == "hi") {
+        setVoiceLang("hi-IN");
+      }
       i18n.changeLanguage(lang);
     }
   }, []);
@@ -91,7 +98,6 @@ const ChatbotSignup = () => {
       if (res.ok) {
         // toast.success("Signup successful");
         console.log("Signup successful");
-        navigate("/login");
       } else {
         const data = await res.json();
         // toast.error("Signup failed");
@@ -183,8 +189,9 @@ const ChatbotSignup = () => {
       id: "contactNumber",
       user: true,
       validator: (value: any) => {
-        if (!isNaN(value) && value.length == 10) {
-          onSignInSubmit(value);
+        const newValue = value.replaceAll(" ", "");
+        if (!isNaN(newValue) && newValue.length === 10) {
+          onSignInSubmit(newValue);
           return true;
         }
         return t("invalidNumber");
@@ -200,7 +207,8 @@ const ChatbotSignup = () => {
       id: "otp",
       user: true,
       validator: (value: any) => {
-        if (!isNaN(value) && value.length == 6) {
+        const newValue = value.replaceAll(" ", "");
+        if (!isNaN(newValue) && newValue.length === 6) {
           return true;
         }
         return t("invalidOtp");
@@ -458,10 +466,13 @@ const ChatbotSignup = () => {
         <ThemeProvider theme={theme}>
           <ChatBot
             recognitionEnable={true}
-            speechSynthesis={{ enable: true, lang: "hi" }}
+            speechSynthesis={{ enable: true, lang: speechLang }}
+            recognitionLang={voiceLang}
             hideHeader={true}
             style={{ width: "100%", height: "100%" }}
             steps={steps}
+            enableSmoothScroll={true}
+            key={speechLang}
           />
         </ThemeProvider>
       </Box>

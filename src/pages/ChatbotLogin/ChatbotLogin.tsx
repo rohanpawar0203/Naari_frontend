@@ -87,8 +87,9 @@ const ChatbotLogin = () => {
       id: "contactNumber",
       user: true,
       validator: (value: any) => {
-        if (!isNaN(value) && value.length == 10) {
-          onSignInSubmit(value);
+        const newValue = value.replaceAll(" ", "");
+        if (!isNaN(newValue) && newValue.length == 10) {
+          onSignInSubmit(newValue);
           return true;
         }
         return t("invalidNumber");
@@ -104,7 +105,8 @@ const ChatbotLogin = () => {
       id: "otp",
       user: true,
       validator: (value: any) => {
-        if (!isNaN(value) && value.length == 6) {
+        const newValue = value.replaceAll(" ", "");
+        if (!isNaN(newValue) && newValue.length == 6) {
           return true;
         }
         return t("invalidOtp");
@@ -137,7 +139,7 @@ const ChatbotLogin = () => {
           padding: "20px",
         }}
       >
-        {/* <Box id="recaptcha-container"></Box> */}
+        <Box id="recaptcha-container"></Box>
         <ThemeProvider theme={theme}>
           <ChatBot
             recognitionEnable={true}
@@ -145,6 +147,7 @@ const ChatbotLogin = () => {
             hideHeader={true}
             style={{ width: "100%", height: "100%" }}
             steps={steps}
+            key={currLang}
           />
         </ThemeProvider>
       </Box>
