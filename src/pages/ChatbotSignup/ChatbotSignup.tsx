@@ -56,19 +56,17 @@ const signupFormData: ISignupFormData = {
 const ChatbotSignup = () => {
   const [number, setNumber] = useState<string>("");
   const [signupInput, setSignupInput] = React.useState(signupFormData);
-  const [speechLang, setSpeechLang] = useState<string>("hi");
-  const [voiceLang, setVoiceLang] = useState<string>("hi-IN");
+  const [speechLang, setSpeechLang] = useState<string>(
+    localStorage.getItem("lang") || ""
+  );
+  const [voiceLang, setVoiceLang] = useState<string>(
+    localStorage.getItem("voiceLang") || ""
+  );
   const { t } = useTranslation();
 
   useEffect(() => {
     const lang = localStorage.getItem("lang");
     if (lang) {
-      setSpeechLang(lang);
-      if (lang == "en") {
-        setVoiceLang("en-US");
-      } else if (lang == "hi") {
-        setVoiceLang("hi-IN");
-      }
       i18n.changeLanguage(lang);
     }
   }, []);
@@ -242,12 +240,12 @@ const ChatbotSignup = () => {
     {
       id: "firstName",
       user: true,
-      validator: (value: any) => {
-        if (/^[a-zA-Z]+$/.test(value)) {
-          return true;
-        }
-        return t("invalidFirstName");
-      },
+      // validator: (value: any) => {
+      //   if (/^[a-zA-Z]+$/.test(value)) {
+      //     return true;
+      //   }
+      //   return t("invalidFirstName");
+      // },
       trigger: "askLastName",
     },
     {
@@ -258,12 +256,12 @@ const ChatbotSignup = () => {
     {
       id: "lastName",
       user: true,
-      validator: (value: any) => {
-        if (/^[a-zA-Z]+$/.test(value)) {
-          return true;
-        }
-        return t("invalidLastName");
-      },
+      // validator: (value: any) => {
+      //   if (/^[a-zA-Z]+$/.test(value)) {
+      //     return true;
+      //   }
+      //   return t("invalidLastName");
+      // },
       trigger: "greetWithName",
     },
     {
@@ -307,14 +305,14 @@ const ChatbotSignup = () => {
     {
       id: "companyName",
       user: true,
-      validator: (value: any) => {
-        const companyNamePattern = /^[a-zA-Z0-9\s]+$/;
-        if (companyNamePattern.test(value) || value === "") {
-          handleLocalStorage({ companyName: value });
-          return true;
-        }
-        return t("invalidCompanyName");
-      },
+      // validator: (value: any) => {
+      //   const companyNamePattern = /^[a-zA-Z0-9\s]+$/;
+      //   if (companyNamePattern.test(value) || value === "") {
+      //     handleLocalStorage({ companyName: value });
+      //     return true;
+      //   }
+      //   return t("invalidCompanyName");
+      // },
       placeholder: t("chatBotPlaceholder"),
       trigger: "askRevenuePerYear",
     },
@@ -472,7 +470,6 @@ const ChatbotSignup = () => {
             style={{ width: "100%", height: "100%" }}
             steps={steps}
             enableSmoothScroll={true}
-            key={speechLang}
           />
         </ThemeProvider>
       </Box>
