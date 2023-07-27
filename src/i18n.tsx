@@ -13,6 +13,8 @@ const resources = {
       invalidNumber: "Please enter a valid Number",
       otpSent: "We have sent an OTP on {previousValue}, Please enter the OTP",
       invalidOtp: "Please enter a valid OTP",
+      otpVerify: "OTP Verified",
+      wrongOTP: "Wrong OTP",
       otpVerified: "Your otp is successfully verified",
       askFirstName: "Please enter your First Name",
       invalidFirstName: "Please enter valid First Name",
@@ -40,7 +42,7 @@ const resources = {
       invalidIFSC: "Please enter valid IFSC Code",
       registrationSuccessful: "Your Registration is Successful",
       login: "Lets Start the Login Process",
-      loginSuccessful: "Your Login is Successful"
+      loginSuccessful: "Your Login is Successful",
     },
   },
   hi: {
@@ -50,12 +52,15 @@ const resources = {
       invalidNumber: "कृपया वैध नंबर दर्ज करें।",
       otpSent: "हमने {previousValue} पर एक OTP भेजा है, कृपया OTP दर्ज करें।",
       invalidOtp: "कृपया वैध OTP दर्ज करें।",
+      otpVerify: "OTP सत्यापित",
+      wrongOTP: "गलत OTP",
       otpVerified: "आपका OTP सफलतापूर्वक सत्यापित हुआ है।",
       askFirstName: "कृपया अपना पहला नाम दर्ज करें।",
       invalidFirstName: "कृपया वैध पहला नाम दर्ज करें।",
       askLastName: "कृपया अपना अंतिम नाम दर्ज करें।",
       invalidLastName: "कृपया वैध अंतिम नाम दर्ज करें।",
-      greetWithName: "आपका स्वागत है {{firstName}} {{lastName}}, आपसे मिलकर खुशी हुई।",
+      greetWithName:
+        "आपका स्वागत है {{firstName}} {{lastName}}, आपसे मिलकर खुशी हुई।",
       askEmailAddress: "कृपया अपना ईमेल पता दर्ज करें।",
       invalidEmailAddress: "कृपया वैध ईमेल पता दर्ज करें।",
       chatBotPlaceholder: "छोड़ने के लिए Enter दबाएँ।",
@@ -77,16 +82,16 @@ const resources = {
       invalidIFSC: "कृपया वैध आईएफएससी कोड दर्ज करें।",
       registrationSuccessful: "आपका पंजीकरण सफल हुआ है।",
       login: "आइए लॉगिन प्रक्रिया शुरू करें",
-      loginSuccessful: "आपका लॉगिन सफल है"
+      loginSuccessful: "आपका लॉगिन सफल है",
     },
   },
 };
 
 i18n
-.use(initReactI18next) // passes i18n down to react-i18next
-.init({
-  resources,
-  lng: "en", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources,
+    lng: localStorage.getItem("lang") || "en", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
     // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
     // if you're using a language detector, do not define the lng option
 

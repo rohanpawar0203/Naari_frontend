@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 import ChatBot from "react-simple-chatbot";
 import { ThemeProvider } from "styled-components";
@@ -9,7 +9,7 @@ import OtpVerification from "../../components/OtpVerification/OtpVerification";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../firebase.config";
 import { useTranslation } from "react-i18next";
-import i18n from "../../i18n";
+import i18next from "i18next";
 
 const theme = {
   background: "#f5f8fb",
@@ -55,21 +55,15 @@ const signupFormData: ISignupFormData = {
 
 const ChatbotSignup = () => {
   const [number, setNumber] = useState<string>("");
-  const [signupInput, setSignupInput] = React.useState(signupFormData);
+  const [signupInput, setSignupInput] = useState(signupFormData);
   const [speechLang, setSpeechLang] = useState<string>(
     localStorage.getItem("lang") || ""
   );
   const [voiceLang, setVoiceLang] = useState<string>(
     localStorage.getItem("voiceLang") || ""
   );
+  const myTimeoutRef = useRef<any>(null);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const lang = localStorage.getItem("lang");
-    if (lang) {
-      i18n.changeLanguage(lang);
-    }
-  }, []);
 
   const handleLocalStorage = (details: any) => {
     setSignupInput((prev) => {
@@ -140,6 +134,19 @@ const ChatbotSignup = () => {
       });
   };
 
+  const alertUser = () => {
+    const intervalId = setInterval(() => {
+      alert("Please give some input");
+    }, 100000);
+
+    myTimeoutRef.current = intervalId;
+  };
+
+  const clearMyTimeout = () => {
+    console.log(myTimeoutRef.current);
+    clearInterval(myTimeoutRef.current);
+  };
+
   const steps = [
     {
       id: "Greet",
@@ -181,12 +188,16 @@ const ChatbotSignup = () => {
     {
       id: "askContactNumber",
       message: t("askContactNumber"),
-      trigger: "contactNumber",
+      trigger: () => {
+        alertUser();
+        return "contactNumber";
+      },
     },
     {
       id: "contactNumber",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const newValue = value.replaceAll(" ", "");
         if (!isNaN(newValue) && newValue.length === 10) {
           onSignInSubmit(newValue);
@@ -199,12 +210,16 @@ const ChatbotSignup = () => {
     {
       id: "otpSent",
       message: t("otpSent"),
-      trigger: "otp",
+      trigger: () => {
+        alertUser();
+        return "otp";
+      },
     },
     {
       id: "otp",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const newValue = value.replaceAll(" ", "");
         if (!isNaN(newValue) && newValue.length === 6) {
           return true;
@@ -235,33 +250,41 @@ const ChatbotSignup = () => {
     {
       id: "askFirstName",
       message: t("askFirstName"),
-      trigger: "firstName",
+      trigger: () => {
+        alertUser();
+        return "firstName";
+      },
     },
     {
       id: "firstName",
       user: true,
-      // validator: (value: any) => {
-      //   if (/^[a-zA-Z]+$/.test(value)) {
-      //     return true;
-      //   }
-      //   return t("invalidFirstName");
-      // },
+      validator: (value: any) => {
+        clearMyTimeout();
+        //   if (/^[a-zA-Z]+$/.test(value)) {
+        return true;
+        //   }
+        // return t("invalidFirstName");
+      },
       trigger: "askLastName",
     },
     {
       id: "askLastName",
       message: t("askLastName"),
-      trigger: "lastName",
+      trigger: () => {
+        alertUser();
+        return "lastName";
+      },
     },
     {
       id: "lastName",
       user: true,
-      // validator: (value: any) => {
-      //   if (/^[a-zA-Z]+$/.test(value)) {
-      //     return true;
-      //   }
-      //   return t("invalidLastName");
-      // },
+      validator: (value: any) => {
+        clearMyTimeout();
+        //   if (/^[a-zA-Z]+$/.test(value)) {
+        return true;
+        //   }
+        //   return t("invalidLastName");
+      },
       trigger: "greetWithName",
     },
     {
@@ -281,12 +304,16 @@ const ChatbotSignup = () => {
     {
       id: "askEmailAddress",
       message: t("askEmailAddress"),
-      trigger: "emailAddress",
+      trigger: () => {
+        alertUser();
+        return "emailAddress";
+      },
     },
     {
       id: "emailAddress",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (emailPattern.test(value) || value === "") {
           handleLocalStorage({ email: value });
@@ -300,31 +327,39 @@ const ChatbotSignup = () => {
     {
       id: "askCompanyName",
       message: t("askCompanyName"),
-      trigger: "companyName",
+      trigger: () => {
+        alertUser();
+        return "companyName";
+      },
     },
     {
       id: "companyName",
       user: true,
-      // validator: (value: any) => {
-      //   const companyNamePattern = /^[a-zA-Z0-9\s]+$/;
-      //   if (companyNamePattern.test(value) || value === "") {
-      //     handleLocalStorage({ companyName: value });
-      //     return true;
-      //   }
-      //   return t("invalidCompanyName");
-      // },
+      validator: (value: any) => {
+        clearMyTimeout();
+        // const companyNamePattern = /^[a-zA-Z0-9\s]+$/;
+        // if (companyNamePattern.test(value) || value === "") {
+        handleLocalStorage({ companyName: value });
+        return true;
+        // }
+        // return t("invalidCompanyName");
+      },
       placeholder: t("chatBotPlaceholder"),
       trigger: "askRevenuePerYear",
     },
     {
       id: "askRevenuePerYear",
       message: t("askRevenuePerYear"),
-      trigger: "revenuePerYear",
+      trigger: () => {
+        alertUser();
+        return "revenuePerYear";
+      },
     },
     {
       id: "revenuePerYear",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const a = Number(value);
         if ((!isNaN(a) && a > 0) || value === "") {
           handleLocalStorage({ revenuePerYear: value });
@@ -338,12 +373,16 @@ const ChatbotSignup = () => {
     {
       id: "askGstIn",
       message: t("askGstIn"),
-      trigger: "gstIn",
+      trigger: () => {
+        alertUser();
+        return "gstIn";
+      },
     },
     {
       id: "gstIn",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const gstNumberPattern = /^[A-Za-z0-9]+$/;
         if (gstNumberPattern.test(value) || value === "") {
           handleLocalStorage({ gst_in: value });
@@ -357,12 +396,16 @@ const ChatbotSignup = () => {
     {
       id: "askPanNumber",
       message: t("askPanNumber"),
-      trigger: "panNumber",
+      trigger: () => {
+        alertUser();
+        return "panNumber";
+      },
     },
     {
       id: "panNumber",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const capitalPan = value.toUpperCase();
         const panNumberPattern = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
         if (panNumberPattern.test(capitalPan) || capitalPan === "") {
@@ -377,12 +420,16 @@ const ChatbotSignup = () => {
     {
       id: "askAadharNumber",
       message: t("askAadharNumber"),
-      trigger: "aadharNumber",
+      trigger: () => {
+        alertUser();
+        return "aadharNumber";
+      },
     },
     {
       id: "aadharNumber",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const aadharRegex = /^\d{12}$/;
         if (aadharRegex.test(value) || value === "") {
           handleLocalStorage({ aadhar_number: value });
@@ -396,12 +443,16 @@ const ChatbotSignup = () => {
     {
       id: "askAccountNumber",
       message: t("askAccountNumber"),
-      trigger: "accountNumber",
+      trigger: () => {
+        alertUser();
+        return "accountNumber";
+      },
     },
     {
       id: "accountNumber",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         if (/^\d+$/.test(value) || value === "") {
           handleLocalStorage({ account_number: value });
           return true;
@@ -414,12 +465,16 @@ const ChatbotSignup = () => {
     {
       id: "askAccountName",
       message: t("askAccountName"),
-      trigger: "accountName",
+      trigger: () => {
+        alertUser();
+        return "accountName";
+      },
     },
     {
       id: "accountName",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         if (/^[a-zA-Z\s]+$/.test(value) || value === "") {
           handleLocalStorage({ account_name: value });
           return true;
@@ -432,12 +487,16 @@ const ChatbotSignup = () => {
     {
       id: "askIfscCode",
       message: t("askIfscCode"),
-      trigger: "ifscCode",
+      trigger: () => {
+        alertUser();
+        return "ifscCode";
+      },
     },
     {
       id: "ifscCode",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const ifscCodePattern = /^[A-Za-z0-9]+$/;
         if (ifscCodePattern.test(value) || value === "") {
           handleLocalStorage({ ifsc_code: value });

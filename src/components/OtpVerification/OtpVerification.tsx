@@ -6,6 +6,7 @@ import { loginAction } from "../../Redux/Actions/loginAction";
 import { IUserData } from "../../pages/Login/Login";
 import { CgSpinner } from "react-icons/cg";
 import styles from "./OtpVerification.module.scss";
+import { useTranslation } from "react-i18next";
 
 const OtpVerification = ({
   triggerNextStep,
@@ -19,6 +20,8 @@ const OtpVerification = ({
   triggerValue: string;
 }) => {
   const [verified, setVerified] = useState<string>("loading");
+
+  const { t } = useTranslation();
 
   const dispatch = useDispatch();
 
@@ -75,8 +78,8 @@ const OtpVerification = ({
       {verified === "loading" && (
         <CgSpinner size={20} className={styles.spinner} />
       )}
-      {verified === "verified" && <Typography>OTP Verified</Typography>}
-      {verified === "failed" && <Typography>Wrong OTP</Typography>}
+      {verified === "verified" && <Typography>{t("otpVerify")}</Typography>}
+      {verified === "failed" && <Typography>{t("wrongOTP")}</Typography>}
     </Box>
   );
 };

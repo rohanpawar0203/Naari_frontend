@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box } from "@mui/material";
 import ChatBot from "react-simple-chatbot";
 import { ThemeProvider } from "styled-components";
@@ -7,7 +7,7 @@ import OtpVerification from "../../components/OtpVerification/OtpVerification";
 import { toast } from "react-toastify";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../firebase.config";
-import i18n from "../../i18n";
+import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 
 const theme = {
@@ -23,17 +23,27 @@ const theme = {
 
 const ChatbotLogin = () => {
   const [number, setNumber] = useState<string>("");
-  const [currLang, setCurrLang] = useState<string>("en");
+  const [speechLang, setSpeechLang] = useState<string>(
+    localStorage.getItem("lang") || ""
+  );
+  const [voiceLang, setVoiceLang] = useState<string>(
+    localStorage.getItem("voiceLang") || ""
+  );
+  const myTimeoutRef = useRef<any>(null);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const lang = localStorage.getItem("lang");
-    console.log("lang:", lang);
-    if (lang) {
-      setCurrLang(lang);
-      i18n.changeLanguage(lang);
-    }
-  }, []);
+  const alertUser = () => {
+    const intervalId = setInterval(() => {
+      alert("Please give some input");
+    }, 100000);
+
+    myTimeoutRef.current = intervalId;
+  };
+
+  const clearMyTimeout = () => {
+    console.log(myTimeoutRef.current);
+    clearInterval(myTimeoutRef.current);
+  };
 
   function onCaptchaVerify(): void {
     window.recaptchaVerifier = new RecaptchaVerifier(
@@ -81,14 +91,18 @@ const ChatbotLogin = () => {
     {
       id: "askContactNumber",
       message: t("askContactNumber"),
-      trigger: "contactNumber",
+      trigger: () => {
+        alertUser();
+        return "contactNumber";
+      },
     },
     {
       id: "contactNumber",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const newValue = value.replaceAll(" ", "");
-        if (!isNaN(newValue) && newValue.length == 10) {
+        if (!isNaN(newValue) && newValue.length === 10) {
           onSignInSubmit(newValue);
           return true;
         }
@@ -99,14 +113,18 @@ const ChatbotLogin = () => {
     {
       id: "otpSent",
       message: t("otpSent"),
-      trigger: "otp",
+      trigger: () => {
+        alertUser();
+        return "otp";
+      },
     },
     {
       id: "otp",
       user: true,
       validator: (value: any) => {
+        clearMyTimeout();
         const newValue = value.replaceAll(" ", "");
-        if (!isNaN(newValue) && newValue.length == 6) {
+        if (!isNaN(newValue) && newValue.length === 6) {
           return true;
         }
         return t("invalidOtp");
@@ -143,11 +161,12 @@ const ChatbotLogin = () => {
         <ThemeProvider theme={theme}>
           <ChatBot
             recognitionEnable={true}
-            speechSynthesis={{ enable: true, lang: currLang }}
+            speechSynthesis={{ enable: true, lang: speechLang }}
+            recognitionLang={voiceLang}
             hideHeader={true}
             style={{ width: "100%", height: "100%" }}
             steps={steps}
-            key={currLang}
+            enableSmoothScroll={true}
           />
         </ThemeProvider>
       </Box>
