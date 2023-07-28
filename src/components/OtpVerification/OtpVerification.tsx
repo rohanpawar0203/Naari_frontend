@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 // import { toast } from "react-toastify";
-import { loginAction } from "../../Redux/Actions/loginAction";
+import { loginAction } from "../../Redux/Actions/LoginAction";
 import { IUserData } from "../../pages/Login/Login";
 import { CgSpinner } from "react-icons/cg";
 import styles from "./OtpVerification.module.scss";
