@@ -8,7 +8,7 @@ import Naari_Logo from "../../assets/Naari_Logo.jpeg";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { IProfileData } from "../AdvSignupForm/AdvSignupForm";
-import { loginAction } from "../../Redux/Actions/loginAction";
+import { loginAction } from "../../Redux/Actions/LoginAction";
 import { useEffect } from "react";
 import i18n from "../../i18n";
 import { useTranslation } from "react-i18next";
