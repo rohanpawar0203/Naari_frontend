@@ -10,7 +10,7 @@ import { AiOutlineCamera } from "react-icons/ai";
 import styles from "./Profile.module.scss";
 import Navbar from "../../components/Navbar/Navbar";
 import { useDispatch } from "react-redux";
-import { loginAction } from "../../Redux/Actions/loginAction";
+import { loginAction } from "../../Redux/Actions/LoginAction";
 import { userAction } from "../../Redux/Actions/userAction";
 
 const Profile = () => {
